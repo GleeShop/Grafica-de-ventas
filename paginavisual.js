@@ -110,64 +110,30 @@ function mostrarGraficaVentas(fechas, valores, sucursal, colorGrafica) {
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false,
-            layout: {
-                padding: {
-                    top: 30, // ✅ Espacio entre leyenda y gráfica
-                    right: 15,
-                    bottom: 10,
-                    left: 15
-                }
-            },
+            interaction: { mode: 'index', intersect: false }, // ✅ Interacción cómoda
             plugins: {
-                legend: {
-                    display: true,
-                    position: 'top',
-                    labels: {
-                        color: '#333',
-                        font: {
-                            size: 14
-                        },
-                        padding: 20 // ✅ Espacio entre leyenda y borde superior
-                    }
-                },
-                datalabels: {
-                    color: '#222',
-                    anchor: 'end',
-                    align: 'top',
-                    font: {
-                        size: 12,
-                        weight: 'bold'
-                    },
-                    formatter: (value) => `Q${value.toLocaleString()}`
-                },
+                legend: { display: true }, // ✅ Leyenda activa e interactiva
                 tooltip: {
-                    enabled: true,
-                    backgroundColor: '#333',
-                    titleFont: { size: 14 },
-                    bodyFont: { size: 12 },
-                    padding: 10,
                     callbacks: {
-                        label: (tooltipItem) => `Venta: Q${tooltipItem.raw.toLocaleString()}`
+                        label: function (context) {
+                            // ✅ Mostrar solo ventas diarias en tooltip
+                            if (context.dataset.label === `Ventas Diarias en ${sucursal}`) {
+                                return 'Q ' + context.parsed.y.toLocaleString('es-GT');
+                            }
+                            return null; // ❌ Ocultar tooltip del promedio
+                        }
                     }
                 }
             },
             scales: {
-                x: {
-                    grid: { display: false },
-                    ticks: { color: '#555' }
-                },
                 y: {
                     beginAtZero: true,
-                    grid: { color: '#ddd' },
                     ticks: {
-                        color: '#555',
-                        callback: (value) => `Q${value}`
+                        callback: (value) => 'Q ' + value.toLocaleString('es-GT')
                     }
                 }
             }
-        }
-        ,
+        },
         plugins: [ChartDataLabels]
     });
 
